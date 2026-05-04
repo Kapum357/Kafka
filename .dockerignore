@@ -1,0 +1,24 @@
+# Ignorar archivos de entorno y credenciales
+.env
+api-key-*.txt
+
+# Ignorar archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignorar entornos virtuales
+.venv/
+venv/
+env/
+
+# Ignorar repositorios y configs de Git
+.git/
+.gitignore
+
+# Ignorar archivos locales y de IDE
+.vscode/
+.idea/
+*.swp
+*.sqlite3
+

@@ -1,0 +1,722 @@
+{
+    "family": "microservices-system",
+    "containerDefinitions": [
+        {
+            "name": "ordering-api",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "hostPort": 8000,
+                    "protocol": "tcp",
+                    "name": "ordering-api-8000-tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "command": [
+                "gunicorn",
+                "patterns.wsgi",
+                "-b",
+                "0.0.0.0:8000"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "ordering"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_USER",
+                    "value": "AKIAQQWBSCG7THBLW4AZ"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_HOST",
+                    "value": "email-smtp.us-east-2.amazonaws.com"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "SES_SMTP_PORT",
+                    "value": "587"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "SES_SMTP_PASSWORD",
+                    "value": "BDXOosTOViPQ0DZote08xMLIoYD57MgjDPvlAtaGABlB"
+                },
+                {
+                    "name": "SES_FROM_EMAIL",
+                    "value": "krishaaron.357@gmail.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "billing-consumer",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "consume_orders"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "billing"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "inventory-consumer",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "consume_payments"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "inventory"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "shipping-payments",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "consume_payments"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "shipping"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "shipping-shipments",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "consume_shipments"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "shipping"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "notification-worker",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "consume_all"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "notification"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_USER",
+                    "value": "AKIAQQWBSCG7THBLW4AZ"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_HOST",
+                    "value": "email-smtp.us-east-2.amazonaws.com"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "SES_SMTP_PORT",
+                    "value": "587"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "SES_SMTP_PASSWORD",
+                    "value": "BDXOosTOViPQ0DZote08xMLIoYD57MgjDPvlAtaGABlB"
+                },
+                {
+                    "name": "SES_FROM_EMAIL",
+                    "value": "krishaaron.357@gmail.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "outbox-publisher",
+            "image": "035839414719.dkr.ecr.us-east-2.amazonaws.com/kafka-microservices:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "command": [
+                "python",
+                "manage.py",
+                "publish_outbox"
+            ],
+            "environment": [
+                {
+                    "name": "SERVICE_NAME",
+                    "value": "common"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "value": "us-east-2"
+                },
+                {
+                    "name": "ORDERING_DB_HOST",
+                    "value": "commercial.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_NAME",
+                    "value": "logistics"
+                },
+                {
+                    "name": "DJANGO_SECRET_KEY",
+                    "value": "secreto"
+                },
+                {
+                    "name": "LOGISTICS_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_USER",
+                    "value": "AKIAQQWBSCG7THBLW4AZ"
+                },
+                {
+                    "name": "ORDERING_DB_USER",
+                    "value": "postgres"
+                },
+                {
+                    "name": "SES_SMTP_HOST",
+                    "value": "email-smtp.us-east-2.amazonaws.com"
+                },
+                {
+                    "name": "ORDERING_DB_NAME",
+                    "value": "commercial"
+                },
+                {
+                    "name": "LOGISTICS_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "patterns.settings"
+                },
+                {
+                    "name": "KAFKA_BOOTSTRAP_SERVERS",
+                    "value": "18.221.108.81:9092"
+                },
+                {
+                    "name": "SES_SMTP_PORT",
+                    "value": "587"
+                },
+                {
+                    "name": "ORDERING_DB_PORT",
+                    "value": "5432"
+                },
+                {
+                    "name": "SES_SMTP_PASSWORD",
+                    "value": "BDXOosTOViPQ0DZote08xMLIoYD57MgjDPvlAtaGABlB"
+                },
+                {
+                    "name": "SES_FROM_EMAIL",
+                    "value": "krishaaron.357@gmail.com"
+                },
+                {
+                    "name": "LOGISTICS_DB_HOST",
+                    "value": "logistics.c9cmiu8cuqx5.us-east-2.rds.amazonaws.com"
+                },
+                {
+                    "name": "USE_IAM_AUTH",
+                    "value": "True"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ORDERING_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-15f2f917-086c-44a5-9756-7ddd6ad8cff4-lWylMQ:password::"
+                },
+                {
+                    "name": "LOGISTICS_DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-2:035839414719:secret:rds!db-992e2793-02f7-4a07-985c-274b4cc77220-NY6dfn:password::"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/microservices-system",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        }
+    ],
+    "executionRoleArn": "arn:aws:iam::035839414719:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
