@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
 
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-default-key-for-dev")
 DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 ALLOWED_HOSTS = [host.strip() for host in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",") if host.strip()]
 

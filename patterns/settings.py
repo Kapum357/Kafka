@@ -35,7 +35,7 @@ DATABASES = {
         "ENGINE": DATABASE_ENGINE,
         "NAME": os.getenv("ORDERING_DB_NAME", "commercial_db"),
         "USER": os.getenv("ORDERING_DB_USER", "postgres"),
-        "PASSWORD": os.environ["ORDERING_DB_PASSWORD"],
+        "PASSWORD": os.getenv("ORDERING_DB_PASSWORD", ""),
         "HOST": os.getenv("ORDERING_DB_HOST", "localhost"),
         "PORT": os.getenv("ORDERING_DB_PORT", "5432"),
         "OPTIONS": {
@@ -47,7 +47,7 @@ DATABASES = {
         "ENGINE": DATABASE_ENGINE,
         "NAME": os.getenv("LOGISTICS_DB_NAME", "logistics_db"),
         "USER": os.getenv("LOGISTICS_DB_USER", "postgres"),
-        "PASSWORD": os.environ["LOGISTICS_DB_PASSWORD"],
+        "PASSWORD": os.getenv("LOGISTICS_DB_PASSWORD", ""),
         "HOST": os.getenv("LOGISTICS_DB_HOST", "localhost"),
         "PORT": os.getenv("LOGISTICS_DB_PORT", "5432"),
         "OPTIONS": {
@@ -59,7 +59,7 @@ DATABASES = {
         "ENGINE": DATABASE_ENGINE,
         "NAME": os.getenv("ORDERING_DB_NAME", "commercial_db"),
         "USER": os.getenv("ORDERING_DB_USER", "postgres"),
-        "PASSWORD": os.environ["ORDERING_DB_PASSWORD"],
+        "PASSWORD": os.getenv("ORDERING_DB_PASSWORD", ""),
         "HOST": os.getenv("ORDERING_DB_HOST", "localhost"),
         "PORT": os.getenv("ORDERING_DB_PORT", "5432"),
         "OPTIONS": {

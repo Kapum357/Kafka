@@ -1,4 +1,4 @@
-"""Kafka producer/consumer helpers for Confluent Cloud."""
+"""Kafka producer/consumer helpers"""
 
 from __future__ import annotations
 
@@ -16,19 +16,13 @@ logger = logging.getLogger(__name__)
 @dataclass(slots=True)
 class KafkaConfig:
     bootstrap_servers: str
-    sasl_username: str | None
-    sasl_password: str | None
     sasl_mechanism: str = "PLAIN"
-    security_protocol: str = "SASL_SSL"
+    security_protocol: str = os.getenv("KAFKA_SECURITY_PROTOCOL", "PLAINTEXT")
 
     @classmethod
     def from_env(cls) -> "KafkaConfig":
         return cls(
-            bootstrap_servers=os.environ["KAFKA_BOOTSTRAP_SERVERS"],
-            sasl_username=os.getenv("KAFKA_API_KEY"),
-            sasl_password=os.getenv("KAFKA_API_SECRET"),
-            sasl_mechanism=os.getenv("KAFKA_SASL_MECHANISM", "PLAIN"),
-            security_protocol=os.getenv("KAFKA_SECURITY_PROTOCOL", "SASL_SSL" if os.getenv("KAFKA_API_KEY") else "PLAINTEXT"),
+            bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
         )
 
     def producer_conf(self) -> dict[str, Any]:
@@ -40,12 +34,6 @@ class KafkaConfig:
             "acks": "all",
             "enable.idempotence": True,
         }
-        if self.sasl_username and self.sasl_password:
-            conf.update({
-                "sasl.mechanisms": self.sasl_mechanism,
-                "sasl.username": self.sasl_username,
-                "sasl.password": self.sasl_password,
-            })
         return conf
 
     def consumer_conf(self, group_id: str) -> dict[str, Any]:
@@ -56,12 +44,6 @@ class KafkaConfig:
             "auto.offset.reset": "earliest",
             "enable.auto.commit": False,
         }
-        if self.sasl_username and self.sasl_password:
-            conf.update({
-                "sasl.mechanisms": self.sasl_mechanism,
-                "sasl.username": self.sasl_username,
-                "sasl.password": self.sasl_password,
-            })
         return conf
 
 
